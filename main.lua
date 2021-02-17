@@ -15,6 +15,10 @@ function love.load()
     ]]
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
+    smallFont = love.graphics.newFont('fonts/font.ttf', 8)
+
+    love.graphics.setFont(smallFont)
+
     push:setupScreen(VIRTUAL_WIDHT, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         resizable = false,
@@ -38,12 +42,17 @@ function love.draw()
     ]]
     push:apply('start')
 
-    love.graphics.printf(
-        'Hello Pong!',
-        0,
-        VIRTUAL_HEIGHT / 2 - 6,
-        VIRTUAL_WIDHT,
-        'center')
+    love.graphics.clear(40 / 255, 45 / 255, 52 / 255, 1)
+
+    love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDHT, 'center')
+
+    -- first paddle(left side)
+    love.graphics.rectangle('fill', 10, 30, 5, 20)
+
+    -- second paddle(right side)
+    love.graphics.rectangle('fill', VIRTUAL_WIDHT - 10, VIRTUAL_HEIGHT - 50, 5, 20)
+
+    love.graphics.rectangle('fill', VIRTUAL_WIDHT / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
     push:apply('end')
 end
