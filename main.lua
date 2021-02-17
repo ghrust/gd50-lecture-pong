@@ -23,5 +23,5 @@ function love.draw()
         0,
         WINDOW_HEIGHT/2 - 6,
         WINDOW_WIDTH,
-        center)
+        'center')
 end
