@@ -8,7 +8,7 @@ push = require 'lib/push/push'
 -- methods
 --
 -- https://github.com/vrld/hump/blob/master/class.lua
-Class = require 'class'
+Class = require 'lib/class'
 
 -- our Paddle class, which stores position and dimensions for each Paddle
 -- and the logic for rendering them
@@ -21,46 +21,46 @@ require 'Ball'
 WINDOW_WIDTH = 854
 WINDOW_HEIGHT = 480
 
-VIRTUAL_WIDHT = 432
+VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
 -- speed at which we will move our paddle; multiplied by dt in update
 PADDLE_SPEED = 200
 
 function love.load()
-    --[[
-        Runs when the game first starts up, only once; used to initialize the game.
-    ]]
-    if arg[#arg] == "-debug" then require("mobdebug").start() end
-    love.graphics.setDefaultFilter('nearest', 'nearest')
+  --[[
+      Runs when the game first starts up, only once; used to initialize the game.
+  ]]
+  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
+  love.graphics.setDefaultFilter('nearest', 'nearest')
 
-    -- "seed" the RNG so that calls to random are always random
-    -- use the current time, since that will vary on startup every time
-    math.randomseed(os.time())
+  -- "seed" the RNG so that calls to random are always random
+  -- use the current time, since that will vary on startup every time
+  math.randomseed(os.time())
 
-    -- more "retro-looking" font object we can use for any text
-    smallFont = love.graphics.newFont('fonts/font.ttf', 8)
-    love.graphics.setFont(smallFont)
+  -- more "retro-looking" font object we can use for any text
+  smallFont = love.graphics.newFont('fonts/font.ttf', 8)
+  love.graphics.setFont(smallFont)
 
-    -- initialize window with virtual resolution
-    push:setupScreen(VIRTUAL_WIDHT, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        fullscreen = false,
-        resizable = false,
-        vsync = true
-    })
+  -- initialize window with virtual resolution
+  push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+      fullscreen = false,
+      resizable = false,
+      vsync = true
+  })
 
-    -- initialize our player paddles; make them global so that they can be
-    -- detected by other functions and modules
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDHT - 10, VIRTUAL_HEIGHT - 30, 5 , 20)
+  -- initialize our player paddles; make them global so that they can be
+  -- detected by other functions and modules
+  player1 = Paddle(10, 30, 5, 20)
+  player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5 , 20)
 
-    -- place a ball in the middle of the screen
-    ball = Ball(VIRTUAL_WIDHT / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
+  -- place a ball in the middle of the screen
+  ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
-    -- game state variable used to transition between different parts of the game
-    -- (used for beginning, menus, main game, high score list, etc.)
-    -- we will use this to determine behavior during render and update
-    gameState = 'start'
+  -- game state variable used to transition between different parts of the game
+  -- (used for beginning, menus, main game, high score list, etc.)
+  -- we will use this to determine behavior during render and update
+  gameState = 'start'
 end
 
 function love.update(dt)
@@ -77,23 +77,23 @@ function love.update(dt)
     player1.dy = 0
   end
 
-    -- player 2 movement
-    if love.keyboard.isDown('up') then
-      player2.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('down') then
-      player2.dy = PADDLE_SPEED
-    else
-      player2.dy = 0
-    end
+  -- player 2 movement
+  if love.keyboard.isDown('up') then
+    player2.dy = -PADDLE_SPEED
+  elseif love.keyboard.isDown('down') then
+    player2.dy = PADDLE_SPEED
+  else
+    player2.dy = 0
+  end
 
-    -- update our ball based on its DX and DY only if we're in play state;
-    -- scale the velocity by dt so movement is framerate-independent
-    if gameState == 'play' then
-      ball:update(dt)
-    end
-    
-    player1:update(dt)
-    player2:update(dt)
+  -- update our ball based on its DX and DY only if we're in play state;
+  -- scale the velocity by dt so movement is framerate-independent
+  if gameState == 'play' then
+    ball:update(dt)
+  end
+
+  player1:update(dt)
+  player2:update(dt)
 end
 
 function love.keypressed(key)
@@ -133,14 +133,14 @@ function love.draw()
   love.graphics.setFont(smallFont)
 
   if gameState == 'start' then
-      love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDHT, 'center')
+      love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDTH, 'center')
   else
-      love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDHT, 'center')
+      love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
   end
 
   -- render paddles, now using their class's render method
-  palyer1:render()
-  palyer2:render()
+  player1:render()
+  player2:render()
 
   -- render ball using its class's render method
   ball:render()
