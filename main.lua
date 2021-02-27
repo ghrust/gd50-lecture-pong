@@ -98,6 +98,19 @@ function love.update(dt)
       end
     end
   end
+
+  -- detect upper and lower screen boundary collision and reverse if collided
+  if ball.y <= 0 then
+    ball.y = 0
+    ball.dy = -ball.dy
+  end
+
+  -- -4 to account for the ball's size
+  if ball.y >= VIRTUAL_HEIGHT - 4 then
+    ball.y = VIRTUAL_HEIGHT - 4
+    ball.dy = -ball.dy
+  end
+
   -- player 1 movement
   if love.keyboard.isDown('w') then
     player1.dy = -PADDLE_SPEED
