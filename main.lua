@@ -85,7 +85,16 @@ function love.update(dt)
     Runs every frame, with "dt" passed in, our delta in seconds
     since the last frame, which LÖVE2D supplies us.
   ]]
-  if gameState == 'play' then
+  if gameState == 'serve' then
+    -- before switching to play, initialize ball's velocity based
+    -- on player who last scored
+    ball.dy = math.random(-50, 50)
+    if servingPlayer == 1 then
+      ball.dx = math.random(140, 200)
+    else
+      ball.dx = -math.random(140, 200)
+    end
+  elseif gameState == 'play' then
     -- detect ball collision with paddles, reversing dx if true and
     -- slightly increasing it, then altering the dy based on the position of collision
     if ball:collides(player1) then
@@ -181,12 +190,9 @@ function love.keypressed(key)
   -- during play mode, the ball will move in a random direction
   elseif key == 'enter' or key == 'return' then
     if gameState == 'start' then
+      gameState = 'serve'
+    elseif gameState == 'serve' then
       gameState = 'play'
-    else
-      gameState = 'start'
-
-      -- ball's new reset method
-      ball:reset()
     end
   end
 end
@@ -206,6 +212,21 @@ function love.draw()
   love.graphics.setFont(smallFont)
 
   displayScore()
+
+  if gameState == 'start' then
+    love.graphics.setFont(smallFont)
+    love.graphics.printf('Welcome to Pong!', 0, 10, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press Enter to begin!', 0, 20, VIRTUAL_WIDTH, 'center')
+  elseif gameState == 'serve' then
+    love.graphics.setFont(smallFont)
+    love.graphics.printf('Player ' .. tostring(servingPlayer) .. "'s serve!",
+      0, 10, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press Enter to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
+  elseif gameState == 'play' then
+    -- pass
+  end
+
+
 
   -- render paddles, now using their class's render method
   player1:render()
