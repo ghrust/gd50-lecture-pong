@@ -62,6 +62,10 @@ function love.load()
   player1Score = 0
   player2Score = 0
 
+  -- either going to be 1 or 2; whomever is scored on gets to serve the
+  -- following turn
+  servingPlayer = 1
+
   -- initialize our player paddles; make them global so that they can be
   -- detected by other functions and modules
   player1 = Paddle(10, 30, 5, 20)
@@ -124,15 +128,17 @@ function love.update(dt)
   -- if we reach the left or right edge of the screen,
   -- go back to start and update the score
   if ball.x < 0 then
+    servingPlayer = 1
     player2Score = player2Score + 1
     ball:reset()
-    gameState = 'start'
+    gameState = 'serve'
   end
 
   if ball.x > VIRTUAL_WIDTH then
+    servingPlayer = 2
     player1Score = player1Score + 1
     ball: reset()
-    gameState = 'start'
+    gameState = 'serve'
   end
 
   -- player 1 movement
@@ -199,13 +205,7 @@ function love.draw()
   -- draw different things based on the state of the game
   love.graphics.setFont(smallFont)
 
-  -- draw score on the left and right center of the screen
-  -- need to switch font to draw before actually printing
-  love.graphics.setFont(scoreFont)
-  love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50,
-    VIRTUAL_HEIGHT / 3)
-  love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30,
-    VIRTUAL_HEIGHT / 3)
+  displayScore()
 
   -- render paddles, now using their class's render method
   player1:render()
@@ -228,4 +228,14 @@ function displayFPS()
   love.graphics.setFont(smallFont)
   love.graphics.setColor(0, 255, 0, 255)
   love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
+end
+
+function displayScore()
+  -- draw score on the left and right center of the screen
+  -- need to switch font to draw before actually printing
+  love.graphics.setFont(scoreFont)
+  love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50,
+    VIRTUAL_HEIGHT / 3)
+  love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30,
+    VIRTUAL_HEIGHT / 3)
 end
