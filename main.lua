@@ -43,6 +43,10 @@ function love.load()
 
   -- more "retro-looking" font object we can use for any text
   smallFont = love.graphics.newFont('fonts/font.ttf', 8)
+
+  -- larger font for drawing the score on the screen
+  scoreFont = love.graphics.newFont('fonts/font.ttf', 32)
+
   love.graphics.setFont(smallFont)
 
   -- initialize window with virtual resolution
@@ -51,6 +55,12 @@ function love.load()
       resizable = false,
       vsync = true
   })
+
+
+  -- initialize score variables, used for rendering on the screen and keeping
+  -- track of the winner
+  player1Score = 0
+  player2Score = 0
 
   -- initialize our player paddles; make them global so that they can be
   -- detected by other functions and modules
@@ -109,6 +119,20 @@ function love.update(dt)
   if ball.y >= VIRTUAL_HEIGHT - 4 then
     ball.y = VIRTUAL_HEIGHT - 4
     ball.dy = -ball.dy
+  end
+
+  -- if we reach the left or right edge of the screen,
+  -- go back to start and update the score
+  if ball.x < 0 then
+    player2Score = player2Score + 1
+    ball:reset()
+    gameState = 'start'
+  end
+
+  if ball.x > VIRTUAL_WIDTH then
+    player1Score = player1Score + 1
+    ball: reset()
+    gameState = 'start'
   end
 
   -- player 1 movement
@@ -175,11 +199,13 @@ function love.draw()
   -- draw different things based on the state of the game
   love.graphics.setFont(smallFont)
 
-  if gameState == 'start' then
-      love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDTH, 'center')
-  else
-      love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
-  end
+  -- draw score on the left and right center of the screen
+  -- need to switch font to draw before actually printing
+  love.graphics.setFont(scoreFont)
+  love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50,
+    VIRTUAL_HEIGHT / 3)
+  love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30,
+    VIRTUAL_HEIGHT / 3)
 
   -- render paddles, now using their class's render method
   player1:render()
